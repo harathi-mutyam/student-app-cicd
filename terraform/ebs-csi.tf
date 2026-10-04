@@ -21,6 +21,11 @@ data "aws_iam_policy_document" "ebs_csi_assume_role" {
   }
 }
 
+
+# --------------------------------------------------
+# CREATE IAM ROLE FOR EBS CSI
+# --------------------------------------------------
+
 resource "aws_iam_role" "ebs_csi_role" {
   name = "${var.cluster_name}-ebs-csi-role"
 
@@ -33,18 +38,18 @@ resource "aws_iam_role" "ebs_csi_role" {
 
 
 # --------------------------------------------------
-# ATTACH AWS EBS CSI POLICY
+# ATTACH AWS MANAGED EBS CSI POLICY
 # --------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
   role = aws_iam_role.ebs_csi_role.name
 
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicyV2"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicyV2"
 }
 
 
 # --------------------------------------------------
-# EBS CSI ADD-ON
+# INSTALL AWS EBS CSI DRIVER ADD-ON
 # --------------------------------------------------
 
 resource "aws_eks_addon" "ebs_csi" {
