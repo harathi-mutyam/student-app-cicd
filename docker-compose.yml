@@ -30,6 +30,13 @@ services:
     ports:
       - "8080:80"
 
+
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: student_management
+
     depends_on:
       - mysql
 
