@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: student-management-php
+  namespace: student-management
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: student-management-php
+
+  template:
+    metadata:
+      labels:
+        app: student-management-php
+
+    spec:
+      containers:
+        - name: php
+
+          image: harathi2026/student-management-php:initial
+
+          ports:
+            - containerPort: 80
+
+          env:
+            - name: DB_HOST
+              value: mysql
+
+            - name: DB_NAME
+              value: student_management
+
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-user
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-password
+
