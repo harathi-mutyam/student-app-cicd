@@ -1,0 +1,58 @@
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: student_management
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+      #- ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
+      - ./sql:/docker-entrypoint-initdb.d
+
+    networks:
+      - student-network
+
+  php-app:
+    build: .
+    container_name: php-app
+
+    restart: always
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - mysql
+
+    networks:
+      - student-network
+
+  python-app:
+    build: ./python
+    container_name: python-app
+
+    restart: always
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      - mysql
+
+    networks:
+      - student-network
+
+volumes:
+  mysql-data:
+
+networks:
+  student-network:
