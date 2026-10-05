@@ -21,7 +21,7 @@ spec:
       containers:
         - name: php
 
-          image: harathi2026/student-management-php:8a6d64f
+          image: harathi2026/student-management-php:d6a3c9a
 
           ports:
             - containerPort: 80
