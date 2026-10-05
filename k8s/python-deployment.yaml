@@ -21,7 +21,7 @@ spec:
       containers:
         - name: python
 
-          image: harathi2026/student-management-python:01ded25
+          image: harathi2026/student-management-python:8a6d64f
 
           ports:
             - containerPort: 5000
