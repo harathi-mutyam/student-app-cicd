@@ -12,10 +12,10 @@
 
 <div class="container">
 
-    <h2>Welcome</h2>
+    <h2>Welcome to Student Project</h2>
 
     <a href="admin/admin_login.php">
-        <button>Admin Login</button>
+        <button>Admin Login change</button>
     </a>
 
     <a href="student/student_login.php">
