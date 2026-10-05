@@ -11,7 +11,7 @@ permissions:
 
 env:
   PHP_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/student-management-php
-  PYTHON_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/student-management-python
+  PYTHON_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/student-management-python
 
 jobs:
 
