@@ -1,0 +1,133 @@
+name: Student Management CI/CD
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PHP_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/student-management-php
+  PYTHON_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/student-management-python
+
+jobs:
+
+  ci:
+    name: Test and Security
+    runs-on: self-hosted
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: PHP Syntax Check
+        run: |
+          docker run --rm \
+            -v "$PWD:/app" \
+            -w /app \
+            php:8.2-cli \
+            sh -c 'find . -name "*.php" -exec php -l {} \;'
+
+      - name: Python Syntax Check
+        run: |
+          python3 -m compileall python/
+
+      - name: Gitleaks Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://localhost:9000
+
+
+  docker:
+    name: Build and Push Images
+
+    needs:
+      - ci
+
+    runs-on: self-hosted
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Image Tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build PHP Image
+        run: |
+          docker build \
+            -t $PHP_IMAGE:$IMAGE_TAG \
+            .
+
+      - name: Push PHP Image
+        run: |
+          docker push \
+            $PHP_IMAGE:$IMAGE_TAG
+
+      - name: Build Python Image
+        run: |
+          docker build \
+            -t $PYTHON_IMAGE:$IMAGE_TAG \
+            ./python
+
+      - name: Push Python Image
+        run: |
+          docker push \
+            $PYTHON_IMAGE:$IMAGE_TAG
+
+
+      - name: Update Kubernetes Images
+        run: |
+
+          sed -i \
+          "s|image: .*student-management-php:.*|image: $PHP_IMAGE:$IMAGE_TAG|" \
+          k8s/php-deployment.yaml
+
+          sed -i \
+          "s|image: .*student-management-python:.*|image: $PYTHON_IMAGE:$IMAGE_TAG|" \
+          k8s/python-deployment.yaml
+
+
+      - name: Commit Kubernetes Changes
+        run: |
+
+          git config user.name "github-actions[bot]"
+
+          git config user.email \
+          "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            k8s/php-deployment.yaml \
+            k8s/python-deployment.yaml
+
+          if git diff --cached --quiet
+          then
+            echo "No changes"
+            exit 0
+          fi
+
+          git commit \
+            -m "ci: deploy $IMAGE_TAG"
+
+          git push
+
