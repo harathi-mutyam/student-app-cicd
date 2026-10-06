@@ -2330,6 +2330,8 @@ Prometheus
 
 PromQL is the query language used by Prometheus to check Kubernetes metrics.
 
+Temporarily Add inbound rules in EC2 Security Group: **Type: Custom TCP Port: 9090 Source: My IP**
+
 ### Step 1 — Start Prometheus Port Forward
 
 On EC2:
@@ -2462,6 +2464,8 @@ Problem occurs  --> Prometheus detects it  --> Prometheus Alert Rule  --> Alertm
 ```
 
 ### Step 1 — Check Alertmanager Pod
+
+
 
 Run:
 ```bash
