@@ -3253,7 +3253,7 @@ Logs successfully stored/queryable
 Your Grafana is already accessible from your browser through:
 Grafana dashboard
 In Grafana go to:
-Connections   Data sources    Add new data source   search : Loki  select :Loki
+Connections  --> Data sources   --> Add new data source  --> search : Loki  -->select :Loki
 Important: On the Add data source screen, search for:
 ```text
 Loki
