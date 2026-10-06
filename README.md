@@ -3073,8 +3073,10 @@ Create:
 ```bash
 vim logging/alloy-values.yaml
 ```
+
+**Paste:**
 ```yaml
-Paste:
+
 alloy:
   configMap:
     content: |
