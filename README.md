@@ -1292,8 +1292,16 @@ ssh -i Downloads/student-cicd-key.pem ubuntu@13.49.138.168
 cd student-app-cicd
 ```
 ```bash
+# 1. List all secrets in the Argo CD namespace
+kubectl get secrets -n argocd
+
+# 2. Describe the Argo CD initial admin secret
+kubectl describe secret argocd-initial-admin-secret -n argocd
+
+# 3. Decode and display the Argo CD admin password
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d && echo
+
 ```
 Copy password --> paste it in browser  --> login into argo cd and observe it
 Username: admin
@@ -1332,6 +1340,8 @@ docker ps
 ```
 Open:
 http://YOUR_EC2_PUBLIC_IP:9000
+
+
 Initial SonarQube credentials are normally:
 ```text
 admin
@@ -1340,8 +1350,9 @@ admin
 admin
 ```
 Change the password when prompted.
-if you are doing second time after pause and start the ec2 instance
-try below steps with yellow colour
+
+**if you are doing second time after pause and start the ec2 instance
+try below steps with yellow colour**
 
 ```bash
 docker ps -a --filter name=sonarqube
@@ -1356,8 +1367,11 @@ docker ps --filter name=sonarqube
 docker logs --tail 30 sonarqube
 ```
 http://YOUR_EC2_PUBLIC_IP:9000
+```bash
 username: admin
+
 password: admin123
+```
 
 if you are using the ec2 instance server after pause and start skip step 29
 
