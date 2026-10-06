@@ -1,8 +1,8 @@
 # Student Management CI/CD, Kubernetes, Monitoring & Logging Notes
 
-> Same notes provided in the source, formatted as Markdown with headings and code blocks.
+### for reference check 54 student app cicd.docx file in the repository
 
-Yes. Since you want one EC2 instance and a simple beginner-friendly implementation, I would simplify the architecture.
+I want one EC2 instance and a simple beginner-friendly implementation, I would simplify the architecture.
 Use the EC2 instance as your CI tools/server machine and use GitHub Actions as CI. We will still deploy the application to EKS using Argo CD. Don't install unnecessary tools all at once.
 ```text
 What we are going to build
@@ -45,7 +45,7 @@ EC2
 ├── eksctl
 └── SonarQube
 ```
-I recommend Ubuntu 24.04, t3.large, about 30 GB disk while SonarQube is running on it. t3.medium can become uncomfortable once you combine SonarQube and your tooling.
+I recommend Ubuntu 24.04, t3.large, about 30 GB disk while SonarQube is running on it. t3.medium or c7.flexlarge can become uncomfortable once you combine SonarQube and your tooling.
 
 ---
 
@@ -55,24 +55,23 @@ I recommend Ubuntu 24.04, t3.large, about 30 GB disk while SonarQube is running 
 In AWS Console:
 EC2 → Instances → Launch instance
 Use approximately:
-Name:
-student-cicd-server
+Name: **student-cicd-server**
 
-AMI:
-Ubuntu Server 24.04 LTS
+AMI: **Ubuntu Server 24.04 LTS**
 
-Instance type:
-t3.large
+Instance type: **c7i-flex.large**
 
-Storage:
-30 GB
+Storage: **40 GB**
 
-Key pair:
+Key pair: 
 Create/select your .pem key
-For the Security Group initially allow:
+
+**For the Security Group initially allow:**
+```bash
 Port	Purpose	Source
 22	SSH	My IP
 9000	SonarQube	anywhereip
+```
  Don't expose port 9000 to 0.0.0.0/0 unless you have a specific reason.
 Launch it.
 
@@ -90,7 +89,9 @@ Then:
 ssh -i your-key.pem ubuntu@YOUR_EC2_PUBLIC_IP
 ```
 You should now see something similar to:
+```bash
 ubuntu@ip-172-31-x-x:~$
+```
 From this point, commands marked EC2 are executed here.
 
 ---
@@ -147,8 +148,10 @@ Check:
 ls
 ```
 You should see your project files such as:
+```bash
 admin/   , student/ , assets/ , config/ , python/ , sql/ , Dockerfile ,
 docker-compose.yml , index.php , README.md
+```
 This is your project directory.
 
 ---
@@ -156,8 +159,12 @@ This is your project directory.
 
 ## PART 5 — Install Docker
 
-EC2
+open EC2 gitbash terminal 
+
+
 Use Docker's Ubuntu repository rather than the older Ubuntu docker.io package. Docker's current Ubuntu installation instructions use its apt repository and packages including docker-ce, docker-ce-cli, containerd.io, Buildx, and the Compose plugin. 
+
+
 Run:
 ```bash
 sudo apt update
